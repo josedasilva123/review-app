@@ -43,7 +43,8 @@ export const RegisterForm = () => {
             <Select id="job" register={register("job")} error={errors.job}>
                 <option value="">Selecione um trabalho</option>
                 <option value="designer">Designer</option>
-                <option value="desenvolvedor">Desenvolvedor</option>                
+                <option value="desenvolvedor">Desenvolvedor</option> 
+                <option value="desenvolvedor">Jornalista</option>                  
             </Select>
             <button type="submit" disabled={loading}>
                 {loading ? "Cadastrando..." : "Cadastrar"}

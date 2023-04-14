@@ -3,9 +3,9 @@ import { Input } from "../../fragments/Input"
 import { Select } from "../../fragments/Select"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerFormSchema } from "./registerFormSchema";
-import { api } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../../providers/UserContext";
 
 export const RegisterForm = () => {
     const [loading, setLoading] = useState(false);
@@ -13,26 +13,14 @@ export const RegisterForm = () => {
         resolver: zodResolver(registerFormSchema)
     });
 
-    console.log(loading);
+    const { userRegister } = useContext(UserContext);
 
-    const navigate = useNavigate();
-
-    const userRegister = async (formData) => {
-        try {
-            setLoading(true);
-            const {data} = await api.post('/users', formData);
-            console.log("Cadastro realizado com sucesso!");
-            navigate('/')
-        } catch (error) {
-            console.log(error);
-           
-        } finally {
-            setLoading(false);
-        }
-    }
+    const navigate = useNavigate();  
 
     const submit = (formData) => {
-        userRegister(formData);
+        userRegister(formData, setLoading, () => {
+            navigate('/')
+        });
     }
 
     return(

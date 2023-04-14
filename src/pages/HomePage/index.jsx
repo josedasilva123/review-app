@@ -1,18 +1,15 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { Header } from "../../components/structures/Header";
-import { LoginForm } from "../../components/structures/LoginForm";
+import { NewsList } from "../../components/structures/NewsList";
+import { Welcome } from "../../components/structures/Welcome";
+import { UserContext } from "../../providers/UserContext";
 
-export const HomePage = ({ user, setUser }) => {
-   const [isLoginOpen, setIsLoginOpen] = useState(false);
-
+export const HomePage = () => {
+   const { user } = useContext(UserContext);
    return (
       <div>
-         <Header
-            user={user}
-            setUser={setUser}
-            isLoginOpen={isLoginOpen}
-            setIsLoginOpen={setIsLoginOpen}
-         />
+         <Header />
+         {user ? <NewsList /> : <Welcome />}
       </div>
    );
 };

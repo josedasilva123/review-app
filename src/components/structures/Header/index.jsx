@@ -1,11 +1,12 @@
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { UserContext } from "../../../providers/UserContext";
 import { LoginForm } from "../LoginForm";
+import styles from "./style.module.css";
 
-export const Header = ({ user, setUser, isLoginOpen, setIsLoginOpen }) => {
-   const userLogout = () => {
-      setUser(null);
-      localStorage.removeItem("@TOKEN");
-   };
+export const Header = () => {
+   const { user, userLogout } = useContext(UserContext);
+   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
    return (
       <header>
@@ -20,9 +21,11 @@ export const Header = ({ user, setUser, isLoginOpen, setIsLoginOpen }) => {
                <button onClick={() => setIsLoginOpen(true)}>Entrar</button>
                <Link to="/register">Cadastrar-se</Link>
                {isLoginOpen ? (
-                  <div>
-                     <button onClick={() => setIsLoginOpen(false)}>Fechar</button>
-                     <LoginForm setUser={setUser} setIsLoginOpen={setIsLoginOpen} />
+                  <div className={styles.overlay}>
+                     <div role="dialog" className={styles.modalBox}>
+                        <button onClick={() => setIsLoginOpen(false)}>Fechar</button>
+                        <LoginForm setIsLoginOpen={setIsLoginOpen} />
+                     </div>
                   </div>
                ) : null}
             </div>

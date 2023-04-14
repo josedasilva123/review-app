@@ -3,9 +3,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginFormSchema } from "./loginFormSchema";
 import { api } from "../../../services/api";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { UserContext } from "../../../providers/UserContext";
 
-export const LoginForm = ({ setUser, setIsLoginOpen }) => {
+export const LoginForm = ({ setIsLoginOpen }) => {
    const [loading, setLoading] = useState(false);
    const {
       register,
@@ -15,22 +16,12 @@ export const LoginForm = ({ setUser, setIsLoginOpen }) => {
       resolver: zodResolver(loginFormSchema),
    });
 
-   const userLogin = async (formData) => {
-      try {
-         setLoading(true);
-         const { data } = await api.post("/login", formData);
-         localStorage.setItem("@TOKEN", data.acessToken);
-         setUser(data.user);
-         setIsLoginOpen(false);
-      } catch (error) {
-         console.log(error);
-      } finally {
-         setLoading(false);
-      }
-   };
-
+   const { userLogin } = useContext(UserContext);
+  
    const submit = (formData) => {
-      userLogin(formData);
+      userLogin(formData, setLoading, () => {
+         setIsLoginOpen(false);
+      });
    };
 
    return (

@@ -6,18 +6,29 @@ export const UserContext = createContext({});
 // gerenciador global
 export const UserProvider = ({ children }) => {
    const [user, setUser] = useState(null);
-   // useQuery
 
-   //Colhe a token do localStorage recupera o usuário através de requisição
    useEffect(() => {
       //Ter uma rota de api adequada para isso!
       const token = localStorage.getItem("@TOKEN");
+      const userId = localStorage.getItem("@USERID");
 
-      //NÃO USEM LOCALSTORAGE - UTILIZEM REQUISIÇÃO COM TOKEN!!!
-      if(token){
-         const user = localStorage.getItem("@USER"); //Substituir por uma requisição segura mais
-         setUser(JSON.parse(user));      
-         //A requisição deveria acontecer
+      const userAutoLogin = async () => {
+         try {
+            const {data} = await api.get(`/users/${userId}`, {
+               headers: {
+                  Authorization: `Bearer ${token}`
+               }
+            })
+            setUser(data);
+         } catch (error) {
+            console.log(error);
+            localStorage.removeItem("@TOKEN");
+            localStorage.removeItem("@USERID");
+         }
+      }
+
+      if(token && userId){
+         userAutoLogin();
       }
    }, [])
 
@@ -27,7 +38,7 @@ export const UserProvider = ({ children }) => {
          setLoading(true);
          const { data } = await api.post("/login", formData);
          localStorage.setItem("@TOKEN", data.accessToken);
-         localStorage.setItem("@USER", JSON.stringify(data.user));
+         localStorage.setItem("@USERID", data.user.id);
          setUser(data.user);
          if (callback) {
             await callback(data);
